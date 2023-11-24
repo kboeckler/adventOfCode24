@@ -17,4 +17,6 @@ data class Day(val name: String, val part1: Part, val part2: Part) {
 }
 
 // List all solutions of all days here
-val solutions = listOf(Day("Day1", day1_part1, day1_part2))
+val solutions = listOf(
+        Day("Day1", day1_part1, day1_part2)
+)
