@@ -1,9 +1,12 @@
 package de.kevinboeckler.aoc23
 
-val day1_part1 = Part { _ ->
-    "hallo welt"
-}
+class Day1 : Day() {
+    override fun part1(input: String): Any {
+        return "hallo welt"
+    }
 
-val day1_part2 = Part { _ ->
-    42
+    override fun part2(input: String): Any {
+        return 42
+    }
+
 }

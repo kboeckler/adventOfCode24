@@ -7,7 +7,7 @@ internal class Day1Test {
 
     @Test
     fun testDay1Part1() {
-        assertEquals("hallo welt", day1_part1.solve("test"))
+        assertEquals("hallo welt", Day1().part1("test"))
     }
 
 }
