@@ -4,11 +4,8 @@ import org.reflections.Reflections
 import java.io.File
 
 fun main() {
-    Reflections("de.kevinboeckler.aoc23")
-        .getSubTypesOf(Day::class.java)
-        .filterNot { it.equals(EmptyDay::class.java) }
-        .sortedBy { it.simpleName }
-        .forEach(::runSolution)
+    Reflections("de.kevinboeckler.aoc23").getSubTypesOf(Day::class.java).filterNot { it.equals(EmptyDay::class.java) }
+        .sortedBy { it.simpleName }.forEach(::runSolution)
 }
 
 private fun runSolution(solutionClass: Class<out Day>) {
@@ -59,7 +56,7 @@ abstract class Day(name: String?) {
     abstract fun part1(input: String): Any
     abstract fun part2(input: String): Any
     open fun readInput(): String {
-        return File("src/main/resources/%s.txt".format(name())).readText()
+        return File("src/main/resources/%s.txt".format(name())).readText().replace("\r\n", "\n")
     }
 }
 
