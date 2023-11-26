@@ -16,6 +16,9 @@ repositories { // Sources of dependencies. See 2️⃣
 dependencies { // All the libraries you want to use. See 4️⃣
     implementation("org.reflections:reflections:0.10.2")
 
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.22.0")
+
     // Copy dependencies' names after you find them in a repository
     testImplementation(kotlin("test")) // The Kotlin test library
 }
