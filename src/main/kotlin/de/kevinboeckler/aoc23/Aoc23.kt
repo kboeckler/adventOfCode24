@@ -11,7 +11,7 @@ import java.net.http.HttpResponse
 
 var session: String? = null
 
-const val AOC_YEAR = 2022
+const val AOC_YEAR = 2023
 
 fun main() {
     session = readSessionFromFile()
