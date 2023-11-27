@@ -56,7 +56,9 @@ abstract class Day(name: String?) {
     abstract fun part1(input: String): Any
     abstract fun part2(input: String): Any
     open fun readInput(): String {
-        return File("src/main/resources/%s.txt".format(name())).readText().replace("\r\n", "\n")
+        val filename = "%s.txt".format(name())
+        val inputFile = File("src/main/resources/$filename")
+        return inputFile.readText().replace("\r\n", "\n")
     }
 }
 
