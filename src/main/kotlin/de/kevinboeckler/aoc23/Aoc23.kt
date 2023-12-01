@@ -140,7 +140,3 @@ private fun download(year: Int, day: Int): String {
     }
     return text
 }
-
-fun String.splitAtNewLine(): List<String> {
-    return this.split("\n")
-}
