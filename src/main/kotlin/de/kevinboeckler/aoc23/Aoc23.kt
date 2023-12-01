@@ -140,3 +140,15 @@ private fun download(year: Int, day: Int): String {
     }
     return text
 }
+
+fun String.splitAtNewLine(): List<String> {
+    return this.split("\n")
+}
+
+fun <R> String.map(transform: (String) -> R): List<R> {
+    return listOf(this).map { transform(it) }
+}
+
+fun <R> String.flatMap(transform: (String) -> R): R {
+    return transform(this)
+}

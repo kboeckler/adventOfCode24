@@ -2,7 +2,8 @@ package de.kevinboeckler.aoc23
 
 class Day1 : Day() {
     override fun part1(input: String): Any {
-        return input.split("\n")
+        return input
+            .flatMap { it.splitAtNewLine() }
             .map {
                 it.replace("[a-zA-Z]*".toRegex(), "")
             }
@@ -11,7 +12,8 @@ class Day1 : Day() {
     }
 
     override fun part2(input: String): Any {
-        return input.split("\n")
+        return input
+            .flatMap { it.splitAtNewLine() }
             .map {
                 it
                     .replace("one", "o1e")
@@ -23,7 +25,6 @@ class Day1 : Day() {
                     .replace("seven", "s7n")
                     .replace("eight", "e8t")
                     .replace("nine", "n9e")
-
             }
             .map {
                 it.replace("[a-zA-Z]*".toRegex(), "")
