@@ -28,22 +28,21 @@ class Day2 : Day() {
             }
     }
 
+    /**
+     * input is something like ```Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green```
+     */
     private fun toGame(input: String): Game {
         val gameRest = "Game\\s(\\d+):(.+)".toRegex().matchEntire(input)!!.groupValues
         return Game(gameRest[1].toInt(), toCubes(gameRest[2]))
     }
 
     /**
-     * input is something like  3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+     * input is something like ``` 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green```
      */
     private fun toCubes(description: String): List<Cubes> {
-        return description
-            .replace(" ", "")
-            .split(";", ",")
-            .map {
-                val amountColor = "(\\d+)(\\w+)".toRegex().matchEntire(it)!!.groupValues
-                Cubes(amountColor[1].toInt(), amountColor[2])
-            }
+        return "\\s(\\d+)\\s(\\w+)[,;]?".toRegex().findAll(description).map {
+            Cubes(it.groupValues[1].toInt(), it.groupValues[2])
+        }.toList()
     }
 
     data class Cubes(val amount: Int, val color: String) {}
