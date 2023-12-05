@@ -2,8 +2,40 @@ package de.kevinboeckler.aoc23
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.math.BigInteger
 
 class Day5Test {
+
+    @Test
+    fun examineInput() {
+        val input = Day5().readInput()
+        val ints = "(\\d+)".toRegex().findAll(input).map { it.value.toBigInteger() }.toList()
+        println(ints.count())
+        println(ints.distinct().count())
+        println(ints.max())
+        "(\\d+)\\s(\\d+)".toRegex().findAll(input.substringBefore("\n"))
+            .onEach { println(it.value)  }
+            .map { it.groupValues[1].toBigInteger() to it.groupValues[2].toBigInteger() }
+            .sortedBy { it.first }
+            .forEach { println("$it and ${it.first + it.second}") }
+        Day5().part1(input)
+    }
+    //1639775
+    //4279520523
+    /*
+    3356941271 54368890 = 3411310161
+    3866217991 323477533
+     */
+
+    private fun intsFromTo(from: BigInteger, range: BigInteger): List<BigInteger> {
+        val ints = mutableListOf<BigInteger>()
+        var i = from
+        while (i < from + range) {
+            ints.add(i)
+            i++
+        }
+        return ints
+    }
 
     @Test
     fun part1() {
