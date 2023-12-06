@@ -3,7 +3,13 @@ package de.kevinboeckler.aoc23
 import java.math.BigInteger
 
 class Day5 : Day() {
+
+    val todo = true
+
     override fun part1(input: String): Any {
+        if (todo) {
+            return "?"
+        }
         val seeds = "(\\d+)".toRegex().findAll(input.substringBefore("\n")).map { it.value.toBigInteger() }
             .map { BigRange(it, 1) }.toList()
         val mappings = "(.+)-to-(.+) map:\\n([\\d\\s]*)".toRegex().findAll(input).map { it.groupValues }
@@ -17,6 +23,9 @@ class Day5 : Day() {
     }
 
     override fun part2(input: String): Any {
+        if (todo) {
+            return "?"
+        }
         val seeds = "(\\d+)\\s(\\d+)".toRegex().findAll(input.substringBefore("\n"))
             .map { it.groupValues[1].toBigInteger() to it.groupValues[2].toBigInteger() }
             .flatMap { intsFromTo(it.first, it.second) }
@@ -33,13 +42,32 @@ class Day5 : Day() {
     }
 
     data class BigRange(val from: BigInteger, val length: BigInteger) {
+        constructor(from: Int, length: Int) : this(from.toBigInteger(), length.toBigInteger())
         constructor(from: BigInteger, length: Int) : this(from, length.toBigInteger())
 
-        fun intersectWith(from: BigInteger, length: BigInteger): List<BigRange> {
-            val thisEnd = this.from + this.length - 1.toBigInteger()
-            val argEnd = from + length - 1.toBigInteger()
-            // TODO return correct intersections
-            throw IllegalStateException("tjoa $from $argEnd / ${this.from} $thisEnd")
+        private val end: BigInteger = this.from + this.length - 1.toBigInteger()
+
+        fun subRangesOf(other: BigRange): List<BigRange> {
+            if (other == this) {
+                return listOf(this)
+            }
+            if (other.end <= this.end && other.from >= this.from) {
+                return listOf(BigRange(other.from, other.end - other.from + 1.toBigInteger()))
+            }
+            if (other.from < this.from && other.end >= this.from && other.end <= this.end) {
+                return listOf(BigRange(other.from, this.from - other.from), this)
+            }
+            if (other.end > this.end && other.from <= this.end && other.from >= this.from) {
+                return listOf(this, BigRange(this.end + 1.toBigInteger(), other.end - this.end))
+            }
+            if (other.from < this.from && other.end > this.end) {
+                return listOf(
+                    BigRange(other.from, this.from - other.from),
+                    this,
+                    BigRange(this.end + 1.toBigInteger(), other.end - this.end)
+                )
+            }
+            return emptyList()
         }
 
     }
@@ -75,7 +103,8 @@ class Day5 : Day() {
         }
         val rangeMapsOfSourceType = mappingsBySourceType[sourceType]!!
         val splitInRanges =
-            rangeMapsOfSourceType.flatMap { inRange.intersectWith(it.sourceRangeStart, it.rangeLength) }.distinct()
+            rangeMapsOfSourceType.flatMap { inRange.subRangesOf(BigRange(it.sourceRangeStart, it.rangeLength)) }
+                .distinct()
         return splitInRanges.flatMap { range ->
             // TODO range.from is wrong right now
             val outRange =
