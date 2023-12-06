@@ -2,43 +2,8 @@ package de.kevinboeckler.aoc23
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.math.BigInteger
-import kotlin.test.Ignore
-import kotlin.test.assertTrue
 
 class Day5Test {
-
-    @Ignore
-    @Test
-    fun examineInput() {
-        val input = Day5().readInput()
-        val ints = "(\\d+)".toRegex().findAll(input).map { it.value.toBigInteger() }.toList()
-        println(ints.count())
-        println(ints.distinct().count())
-        println(ints.max())
-        "(\\d+)\\s(\\d+)".toRegex().findAll(input.substringBefore("\n"))
-            .onEach { println(it.value) }
-            .map { it.groupValues[1].toBigInteger() to it.groupValues[2].toBigInteger() }
-            .sortedBy { it.first }
-            .forEach { println("$it and ${it.first + it.second}") }
-        Day5().part1(input)
-    }
-    //1639775
-    //4279520523
-    /*
-    3356941271 54368890 = 3411310161
-    3866217991 323477533
-     */
-
-    private fun intsFromTo(from: BigInteger, range: BigInteger): List<BigInteger> {
-        val ints = mutableListOf<BigInteger>()
-        var i = from
-        while (i < from + range) {
-            ints.add(i)
-            i++
-        }
-        return ints
-    }
 
     @Test
     fun part1() {
@@ -123,58 +88,52 @@ class Day5Test {
     }
 
     @Test
-    fun bigRange_subRangesOf_nothingBecauseWithBehind() {
-        assertTrue(Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(11, 1)).isEmpty())
+    fun part2_real() {
+        assertEquals(11611182.toBigInteger(), Day5().part2(Day5().readInput()))
     }
 
     @Test
-    fun bigRange_subRangesOf_nothingBecauseWithBefore() {
-        assertTrue(Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(0, 1)).isEmpty())
+    fun bigRange_intersect_nothingBecauseOtherBehind() {
+        assertEquals(null, Day5.BigRange(1, 10).intersect(Day5.BigRange(11, 1)))
     }
 
     @Test
-    fun bigRange_subRangesOf_oneBecauseWithEquals() {
-        assertEquals(1, Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(1, 10)).size)
+    fun bigRange_intersect_nothingBecauseOtherBefore() {
+        assertEquals(null, Day5.BigRange(1, 10).intersect(Day5.BigRange(0, 1)))
     }
 
     @Test
-    fun bigRange_subRangesOf_oneBecauseWithFromEquals() {
-        assertEquals(1, Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(1, 5)).size)
-        assertEquals(Day5.BigRange(1, 5), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(1, 5))[0])
+    fun bigRange_intersect_otherEquals() {
+        assertEquals(Day5.BigRange(1, 10), Day5.BigRange(1, 10).intersect(Day5.BigRange(1, 10)))
     }
 
     @Test
-    fun bigRange_subRangesOf_oneBecauseWithEndEquals() {
-        assertEquals(1, Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(6, 5)).size)
-        assertEquals(Day5.BigRange(6, 5), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(6, 5))[0])
+    fun bigRange_intersect_otherFromEquals() {
+        assertEquals(Day5.BigRange(1, 5), Day5.BigRange(1, 10).intersect(Day5.BigRange(1, 5)))
     }
 
     @Test
-    fun bigRange_subRangesOf_oneBecauseWithInside() {
-        assertEquals(1, Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(6, 2)).size)
-        assertEquals(Day5.BigRange(6, 2), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(6, 2))[0])
-    }
-
-    // TODO from here
-    @Test
-    fun bigRange_subRangesOf_twoBecauseWithAtBegin() {
-        assertEquals(2, Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(0, 2)).size)
-        assertEquals(Day5.BigRange(0, 1), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(0, 2))[0])
-        assertEquals(Day5.BigRange(1, 10), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(0, 2))[1])
+    fun bigRange_intersect_otherEndEquals() {
+        assertEquals(Day5.BigRange(6, 5), Day5.BigRange(1, 10).intersect(Day5.BigRange(6, 5)))
     }
 
     @Test
-    fun bigRange_subRangesOf_twoBecauseWithAtEnd() {
-        assertEquals(2, Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(10, 2)).size)
-        assertEquals(Day5.BigRange(1, 10), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(10, 2))[0])
-        assertEquals(Day5.BigRange(11, 1), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(10, 2))[1])
+    fun bigRange_intersect_otherInside() {
+        assertEquals(Day5.BigRange(6, 2), Day5.BigRange(1, 10).intersect(Day5.BigRange(6, 2)))
     }
 
     @Test
-    fun bigRange_subRangesOf_threeBecauseWithCovers() {
-        assertEquals(3, Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(0, 12)).size)
-        assertEquals(Day5.BigRange(0, 1), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(0, 12))[0])
-        assertEquals(Day5.BigRange(1, 10), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(0, 12))[1])
-        assertEquals(Day5.BigRange(11, 1), Day5.BigRange(1, 10).subRangesOf(Day5.BigRange(0, 12))[2])
+    fun bigRange_intersect_otherAtBegin() {
+        assertEquals(Day5.BigRange(1, 1), Day5.BigRange(1, 10).intersect(Day5.BigRange(0, 2)))
+    }
+
+    @Test
+    fun bigRange_intersect_otherAtEnd() {
+        assertEquals(Day5.BigRange(10, 1), Day5.BigRange(1, 10).intersect(Day5.BigRange(10, 2)))
+    }
+
+    @Test
+    fun bigRange_intersect_otherCovers() {
+        assertEquals(Day5.BigRange(1, 10), Day5.BigRange(1, 10).intersect(Day5.BigRange(0, 12)))
     }
 }

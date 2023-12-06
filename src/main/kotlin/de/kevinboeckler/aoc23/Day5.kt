@@ -4,12 +4,7 @@ import java.math.BigInteger
 
 class Day5 : Day() {
 
-    val todo = true
-
     override fun part1(input: String): Any {
-        if (todo) {
-            return "?"
-        }
         val seeds = "(\\d+)".toRegex().findAll(input.substringBefore("\n")).map { it.value.toBigInteger() }
             .map { BigRange(it, 1) }.toList()
         val mappings = "(.+)-to-(.+) map:\\n([\\d\\s]*)".toRegex().findAll(input).map { it.groupValues }
@@ -18,19 +13,14 @@ class Day5 : Day() {
                 mappings.map {
                     RangeMap(match[1], match[2], it.first, it.second, it.third)
                 }
-            }.onEach { println(it) }
+            }
         return seeds.map { search(it, "seed", "location", mappings) }.flatten().minOfOrNull { it.from }!!
     }
 
     override fun part2(input: String): Any {
-        if (todo) {
-            return "?"
-        }
         val seeds = "(\\d+)\\s(\\d+)".toRegex().findAll(input.substringBefore("\n"))
             .map { it.groupValues[1].toBigInteger() to it.groupValues[2].toBigInteger() }
-            .flatMap { intsFromTo(it.first, it.second) }
-            // TODO create big ranges so it makes sense
-            .map { BigRange(it, 1) }
+            .map { BigRange(it.first, it.second) }
         val mappings = "(.+)-to-(.+) map:\\n([\\d\\s]*)".toRegex().findAll(input).map { it.groupValues }
             .flatMap { match ->
                 val mappings = numberLinesToMappings(match[3])
@@ -47,27 +37,25 @@ class Day5 : Day() {
 
         private val end: BigInteger = this.from + this.length - 1.toBigInteger()
 
-        fun subRangesOf(other: BigRange): List<BigRange> {
+        fun intersect(other: BigRange): BigRange? {
             if (other == this) {
-                return listOf(this)
+                return this
             }
             if (other.end <= this.end && other.from >= this.from) {
-                return listOf(BigRange(other.from, other.end - other.from + 1.toBigInteger()))
+                return BigRange(other.from, other.end - other.from + 1.toBigInteger())
             }
             if (other.from < this.from && other.end >= this.from && other.end <= this.end) {
-                return listOf(BigRange(other.from, this.from - other.from), this)
+                // intersects left
+                return BigRange(this.from, other.end - this.from + 1.toBigInteger())
             }
             if (other.end > this.end && other.from <= this.end && other.from >= this.from) {
-                return listOf(this, BigRange(this.end + 1.toBigInteger(), other.end - this.end))
+                // intersects right
+                return BigRange(other.from, this.end - other.from + 1.toBigInteger())
             }
             if (other.from < this.from && other.end > this.end) {
-                return listOf(
-                    BigRange(other.from, this.from - other.from),
-                    this,
-                    BigRange(this.end + 1.toBigInteger(), other.end - this.end)
-                )
+                return this
             }
-            return emptyList()
+            return null
         }
 
     }
@@ -78,7 +66,17 @@ class Day5 : Day() {
         val destRangeStart: BigInteger,
         val sourceRangeStart: BigInteger,
         val rangeLength: BigInteger
-    )
+    ) {
+        fun maps(target: BigRange): Boolean {
+            return target.from in sourceRangeStart..<sourceRangeStart + rangeLength
+        }
+
+        fun map(target: BigRange): BigRange {
+            val newFrom = target.from - sourceRangeStart + destRangeStart
+            return BigRange(newFrom, target.length)
+        }
+
+    }
 
     private fun numberLinesToMappings(numberLines: String): List<Triple<BigInteger, BigInteger, BigInteger>> {
         return "(\\d+)\\s(\\d+)\\s(\\d+)".toRegex().findAll(numberLines)
@@ -103,26 +101,15 @@ class Day5 : Day() {
         }
         val rangeMapsOfSourceType = mappingsBySourceType[sourceType]!!
         val splitInRanges =
-            rangeMapsOfSourceType.flatMap { inRange.subRangesOf(BigRange(it.sourceRangeStart, it.rangeLength)) }
-                .distinct()
+            rangeMapsOfSourceType.mapNotNull { inRange.intersect(BigRange(it.sourceRangeStart, it.rangeLength)) }
+                .ifEmpty { listOf(inRange) }
         return splitInRanges.flatMap { range ->
-            // TODO range.from is wrong right now
             val outRange =
-                rangeMapsOfSourceType.filter { range.from in it.sourceRangeStart..<it.sourceRangeStart + it.rangeLength }
-                    .map { it.destRangeStart + range.from - it.sourceRangeStart }.map { BigRange(it, 1) }
+                rangeMapsOfSourceType.filter { it.maps(range) }
+                    .map { it.map(range) }
                     .firstOrNull()
-                    ?: inRange
+                    ?: range
             search(outRange, rangeMapsOfSourceType.first().destType, destType, mappings)
         }.toList()
-    }
-
-    private fun intsFromTo(from: BigInteger, range: BigInteger): List<BigInteger> {
-        val ints = mutableListOf<BigInteger>()
-        var i = from
-        while (i < from + range) {
-            ints.add(i)
-            i++
-        }
-        return ints
     }
 }
