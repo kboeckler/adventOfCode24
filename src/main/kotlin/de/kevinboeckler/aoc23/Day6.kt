@@ -1,6 +1,8 @@
 package de.kevinboeckler.aoc23
 
 import java.math.BigInteger
+import java.math.MathContext
+import java.math.RoundingMode
 
 class Day6 : Day() {
     override fun part1(input: String): Any {
@@ -21,11 +23,18 @@ class Day6 : Day() {
     }
 
     private fun waysToBeatTheRecord(game: RaceGame): Int {
-        return IntRange(0, game.time)
-            .map { buttonMs -> (game.time.toBigInteger() - buttonMs.toBigInteger()) * buttonMs.toBigInteger() }
-            .count { d ->
-                d > game.recordDistance
-            }
+        val lowerBound =
+            (0.5 * game.time).toBigDecimal() - ((0.25.toBigDecimal() * game.time.toBigDecimal() * game.time.toBigDecimal()) - game.recordDistance.toBigDecimal()).sqrt(
+                MathContext(34, RoundingMode.DOWN)
+            )
+        val upperBound =
+            (0.5 * game.time).toBigDecimal() + ((0.25.toBigDecimal() * game.time.toBigDecimal() * game.time.toBigDecimal()) - game.recordDistance.toBigDecimal()).sqrt(
+                MathContext(34, RoundingMode.UP)
+            )
+        val smallestWay = lowerBound.toBigInteger() + 1.toBigInteger()
+        val greatestWay =
+            if (upperBound.divideAndRemainder(1.toBigDecimal())[1].compareTo(0.toBigDecimal()) == 0) upperBound.toBigInteger() - 1.toBigInteger() else upperBound.toBigInteger()
+        return (greatestWay - smallestWay).toInt() + 1
     }
 
     data class RaceGame(val time: Int, val recordDistance: BigInteger)
