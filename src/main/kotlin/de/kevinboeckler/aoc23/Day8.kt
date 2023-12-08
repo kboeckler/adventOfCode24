@@ -1,33 +1,39 @@
 package de.kevinboeckler.aoc23
 
+import java.math.BigInteger
+
 class Day8 : Day() {
+
     override fun part1(input: String): Any {
-        val rlToIndex = mapOf('L' to 0, 'R' to 1)
-        val instructions = input.lines()[0].map { rlToIndex[it]!! }
-        val intersections = "(.+) = \\((.+), (.+)\\)".toRegex().findAll(input).map { it.groupValues }
-            .map { Intersection(it[1], listOf(it[2], it[3])) }.groupBy { it.from }.mapValues { it.value[0] }
-        return calculateSteps("AAA", "ZZZ".toRegex(), instructions, intersections)
+        return runStepsMatching(input, "AAA".toRegex(), "ZZZ".toRegex())
     }
 
     override fun part2(input: String): Any {
-        val rlToIndex = mapOf('L' to 0, 'R' to 1)
-        val instructions = input.lines()[0].map { rlToIndex[it]!! }
+        return runStepsMatching(input, "..A".toRegex(), "..Z".toRegex())
+    }
+
+    private fun runStepsMatching(
+        input: String,
+        startMatch: Regex,
+        endMatch: Regex
+    ): BigInteger {
+        val instructions = input.lines()[0].replace("L", "0").replace("R", "1").map { "$it".toInt() }
         val intersections = "(.+) = \\((.+), (.+)\\)".toRegex().findAll(input).map { it.groupValues }
             .map { Intersection(it[1], listOf(it[2], it[3])) }.groupBy { it.from }.mapValues { it.value[0] }
-        return intersections.map { it.value.from }.filter { it.endsWith("A") }
-            .map { calculateSteps(it, "..Z".toRegex(), instructions, intersections) }
-            .joinToString(",") { "$it" }.run { "lcm($this)" }
+        return intersections.map { it.value.from }.filter { startMatch.matches(it) }
+            .map { calculateSteps(it, endMatch, instructions, intersections) }
+            .run { lcm(this) }
     }
 
     private fun calculateSteps(
         start: String,
-        endCheck: Regex,
+        endMatch: Regex,
         instructions: List<Int>,
         intersections: Map<String, Intersection>
     ): Int {
         var steps = 0
         var current = start
-        while (!current.matches(endCheck)) {
+        while (!current.matches(endMatch)) {
             val instruction = instructions[steps % instructions.size]
             current = intersections[current]!!.target[instruction]
             steps++
@@ -36,5 +42,9 @@ class Day8 : Day() {
     }
 
     data class Intersection(val from: String, val target: List<String>)
+
+    private fun lcm(numbers: List<Int>): BigInteger {
+        return numbers.map { it.toBigInteger() }.reduce { a, b -> a * b / a.gcd(b) }
+    }
 
 }

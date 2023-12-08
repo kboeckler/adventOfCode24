@@ -8,7 +8,7 @@ class Day8Test {
     @Test
     fun part1() {
         assertEquals(
-            2, Day8().part1(
+            2.toBigInteger(), Day8().part1(
                 "RL\n" +
                         "\n" +
                         "AAA = (BBB, CCC)\n" +
@@ -25,7 +25,7 @@ class Day8Test {
     @Test
     fun part2() {
         assertEquals(
-            6, Day8().part2(
+            6.toBigInteger(), Day8().part2(
                 "LR\n" +
                         "\n" +
                         "11A = (11B, XXX)\n" +
