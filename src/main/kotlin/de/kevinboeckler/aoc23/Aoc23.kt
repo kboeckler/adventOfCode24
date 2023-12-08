@@ -8,6 +8,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import kotlin.system.measureTimeMillis
 
 var session: String? = null
 
@@ -29,24 +30,26 @@ private fun runSolution(solutionClass: Class<out Day>) {
     }
     var result1: Any = "_"
     var result2: Any = "_"
-    try {
-        val input = solution.readInput()
-        result1 = try {
-            solution.part1(input)
+    val timeSpentInMs = measureTimeMillis {
+        try {
+            val input = solution.readInput()
+            result1 = try {
+                solution.part1(input)
+            } catch (err: Throwable) {
+                errors.add(err)
+                "_"
+            }
+            result2 = try {
+                solution.part2(input)
+            } catch (err: Throwable) {
+                errors.add(err)
+                "_"
+            }
         } catch (err: Throwable) {
             errors.add(err)
-            "_"
         }
-        result2 = try {
-            solution.part2(input)
-        } catch (err: Throwable) {
-            errors.add(err)
-            "_"
-        }
-    } catch (err: Throwable) {
-        errors.add(err)
     }
-    println("%s: %s, %s".format(solution.name(), result1, result2))
+    println("%s: %s, %s (%dms)".format(solution.name(), result1, result2, timeSpentInMs))
     errors.forEach { err -> err.printStackTrace() }
 }
 
