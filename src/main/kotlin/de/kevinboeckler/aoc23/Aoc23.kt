@@ -17,7 +17,21 @@ const val AOC_YEAR = 2023
 fun main() {
     session = readSessionFromFile()
     Reflections("de.kevinboeckler.aoc23").getSubTypesOf(Day::class.java).filterNot { it.equals(EmptyDay::class.java) }
-        .sortedBy { it.simpleName }.forEach(::runSolution)
+        .sortedWith(::compareSolutionNameTo).forEach(::runSolution)
+}
+
+fun compareSolutionNameTo(one: Class<out Day>?, another: Class<out Day>?): Int {
+    val matchOne = "(.*Day)(\\d+)\$".toRegex().matchEntire(one!!.simpleName)
+    val matchAnother = "(.*Day)(\\d+)\$".toRegex().matchEntire(another!!.simpleName)
+    val pureOne = if (matchOne != null) matchOne.groupValues[1] else one.simpleName
+    val pureAnother = if (matchAnother != null) matchAnother.groupValues[1] else one.simpleName
+    val compPure = pureOne.compareTo(pureAnother)
+    if (compPure != 0) {
+        return compPure
+    }
+    val numberOne = if (matchOne != null) matchOne.groupValues[2].toInt() else 0
+    val numberTwo = if (matchAnother != null) matchAnother.groupValues[2].toInt() else 0
+    return numberOne.compareTo(numberTwo)
 }
 
 private fun runSolution(solutionClass: Class<out Day>) {
