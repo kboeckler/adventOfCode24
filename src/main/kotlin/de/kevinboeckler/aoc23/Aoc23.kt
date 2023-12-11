@@ -132,7 +132,7 @@ fun readSessionFromFile(): String? {
             .warn("In order to download missing input automatically you need to provide a .aoc_session file containing the session value.")
         return null
     }
-    return sessionFile.readText()
+    return sessionFile.readText().trimEnd('\r', '\n')
 }
 
 private fun download(year: Int, day: Int): String {
