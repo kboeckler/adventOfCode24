@@ -16,7 +16,7 @@ class Day11 : Day() {
     }
 
     override fun part2(input: String): Any {
-        TODO("Not yet implemented")
+        return "?"
     }
 
     data class Path(val from: Pair<Int, Int>, val to: Pair<Int, Int>, val length: Int)
