@@ -12,7 +12,7 @@ class Day11 : Day() {
                 Path(it, g, abs(g.first - it.first) + abs(g.second - it.second))
             }
         }
-        return "?"
+        return shortestPaths.sumOf { it.length } / 2
     }
 
     override fun part2(input: String): Any {
