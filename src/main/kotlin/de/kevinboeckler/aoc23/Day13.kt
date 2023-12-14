@@ -7,7 +7,7 @@ class Day13 : Day() {
             (0..pattern.indexOf('\n') - 2).filter { splitIndex ->
                 pattern.lines().all { isVerticalSplit(splitIndex, it) }
             }.firstOrNull()
-        }.onEachIndexed { i, split -> println("i $i has vertical split $split") }.sumOf { it + 1 }
+        }.sumOf { it + 1 }
         val patternsTransposed = patterns.map {
             transpose(it.lines()).joinToString("\n")
         }
@@ -15,7 +15,7 @@ class Day13 : Day() {
             (0..pattern.indexOf('\n') - 2).filter { splitIndex ->
                 pattern.lines().all { isVerticalSplit(splitIndex, it) }
             }.firstOrNull()
-        }.onEachIndexed { i, split -> println("i $i has horizontal split $split") }.sumOf { (it + 1) * 100 }
+        }.sumOf { (it + 1) * 100 }
         return scoreLeft + scoreAbove
     }
 
