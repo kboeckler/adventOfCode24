@@ -3,29 +3,30 @@ package de.kevinboeckler.aoc23
 class Day13 : Day() {
     override fun part1(input: String): Any {
         val patterns = input.split("\n\n")
-        patterns.map {
-            it.lines().asSequence().map { row -> findVerticalSplits(row) }.reduce(this::mergeVerticalSplits)
-                .firstOrNull()
-        }.forEachIndexed { i, split -> println("i $i has vertical split $split") }
-        patterns.map {
-            transpose(it.lines()).map { row -> findVerticalSplits(row) }.reduce(this::mergeVerticalSplits).firstOrNull()
-        }.forEachIndexed { i, split -> println("i $i has horizontal split $split") }
-        return "?"
+        val scoreLeft = patterns.mapNotNull { pattern ->
+            (0..pattern.indexOf('\n') - 2).filter { splitIndex ->
+                pattern.lines().all { isVerticalSplit(splitIndex, it) }
+            }.firstOrNull()
+        }.onEachIndexed { i, split -> println("i $i has vertical split $split") }.sumOf { it + 1 }
+        val patternsTransposed = patterns.map {
+            transpose(it.lines()).joinToString("\n")
+        }
+        val scoreAbove = patternsTransposed.mapNotNull { pattern ->
+            (0..pattern.indexOf('\n') - 2).filter { splitIndex ->
+                pattern.lines().all { isVerticalSplit(splitIndex, it) }
+            }.firstOrNull()
+        }.onEachIndexed { i, split -> println("i $i has horizontal split $split") }.sumOf { (it + 1) * 100 }
+        return scoreLeft + scoreAbove
     }
 
     override fun part2(input: String): Any {
-        TODO("Not yet implemented")
+        return "?"
     }
 
-    private fun findVerticalSplits(row: String): List<Int> {
-        val inverse = row.reversed()
-        return (1..<inverse.length - 1).map { it to inverse.substring(it) }
-            .filter { row.startsWith(it.second) }
-            .map { row.length - it.first - 1 }
-    }
-
-    private fun mergeVerticalSplits(one: List<Int>, another: List<Int>): List<Int> {
-        return one.plus(another).filterNot { one.contains(it) && another.contains(it) }
+    private fun isVerticalSplit(splitIndex: Int, row: String): Boolean {
+        val first = row.substring(0, splitIndex + 1).reversed()
+        val second = row.substring(splitIndex + 1)
+        return first.startsWith(second) || second.startsWith(first)
     }
 
 }
