@@ -80,10 +80,4 @@ class Day3 : Day() {
         }
         return symbols
     }
-
-    private fun Int.toCoords(width: Int): Pair<Int, Int> {
-        val x = this % width
-        val y = this / width
-        return x to y
-    }
 }

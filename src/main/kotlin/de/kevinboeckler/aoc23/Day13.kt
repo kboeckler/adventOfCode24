@@ -28,11 +28,4 @@ class Day13 : Day() {
         return one.plus(another).filterNot { one.contains(it) && another.contains(it) }
     }
 
-    private fun transpose(rows: List<String>): List<String> {
-        return (0..<rows[0].length).map { y ->
-            (0..<rows.size).mapNotNull { x ->
-                rows[x][y]
-            }.joinToString("")
-        }.toList()
-    }
 }

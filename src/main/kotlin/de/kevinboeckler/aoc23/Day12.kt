@@ -34,6 +34,16 @@ class Day12 : Day() {
         return arrangementsOf(replaced1) + arrangementsOf(replaced2)
     }
 
+    private fun arrangementsOf2(condition: Conditions): Int {
+        println(condition.groups)
+        val re = (condition.groups.map { amount -> (0..<amount).joinToString("") { _ -> "[#\\?]" } }
+            .joinToString("[\\.\\?]+")).toRegex()
+        println(re)
+        val result = re.findAll(condition.record)
+        println(result)
+        return arrangementsOf(condition)
+    }
+
     private fun isFeasible(condition: Conditions): Boolean {
         val actualGroupLengths = "(#+)".toRegex().findAll(condition.record).map { it.value }.map { it.length }.toList()
         return actualGroupLengths == condition.groups

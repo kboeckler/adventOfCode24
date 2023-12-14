@@ -43,8 +43,4 @@ class Day8 : Day() {
 
     data class Intersection(val from: String, val target: List<String>)
 
-    private fun lcm(numbers: List<Int>): BigInteger {
-        return numbers.map { it.toBigInteger() }.reduce { a, b -> a * b / a.gcd(b) }
-    }
-
 }
