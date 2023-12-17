@@ -16,6 +16,10 @@ fun Int.toCoords(width: Int): Pair<Int, Int> {
     return x to y
 }
 
+fun Pair<Int, Int>.toIndex(width: Int): Int {
+    return second * width + first
+}
+
 fun lcm(numbers: List<Int>): BigInteger {
     return numbers.map { it.toBigInteger() }.reduce { a, b -> a * b / a.gcd(b) }
 }
