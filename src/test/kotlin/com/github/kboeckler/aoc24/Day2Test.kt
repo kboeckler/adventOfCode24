@@ -1,4 +1,4 @@
-package de.kevinboeckler.aoc23
+package com.github.kboeckler.aoc24
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

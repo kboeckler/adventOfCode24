@@ -1,4 +1,4 @@
-package de.kevinboeckler.aoc23
+package com.github.kboeckler.aoc24
 
 import org.apache.logging.log4j.kotlin.Logging
 import org.reflections.Reflections
@@ -12,11 +12,11 @@ import kotlin.system.measureTimeMillis
 
 var session: String? = null
 
-const val AOC_YEAR = 2023
+const val AOC_YEAR = 2024
 
 fun main() {
     session = readSessionFromFile()
-    Reflections("de.kevinboeckler.aoc23").getSubTypesOf(Day::class.java).filterNot { it.equals(EmptyDay::class.java) }
+    Reflections("com.github.kboeckler.aoc24").getSubTypesOf(Day::class.java).filterNot { it.equals(EmptyDay::class.java) }
         .sortedWith(::compareSolutionNameTo).forEach(::runSolution)
 }
 

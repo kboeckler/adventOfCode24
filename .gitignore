@@ -37,5 +37,8 @@ bin/
 # Ignore Gradle build output directory
 build
 
+# Kotlin
+.kotlin/
+
 # Ignore session storage
 .aoc_session

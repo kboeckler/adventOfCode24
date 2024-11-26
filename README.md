@@ -1,6 +1,4 @@
-# Advent of Code 23
-
-![run workflow](https://github.com/kboeckler/adventOfCode23/actions/workflows/run.yml/badge.svg)
+# Advent of Code 24
 
 Run ``` ./gradlew run ``` to execute the main runner.
 
