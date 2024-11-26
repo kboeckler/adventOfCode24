@@ -1,7 +1,7 @@
 package com.github.kboeckler.aoc24
 
-import org.apache.logging.log4j.kotlin.Logging
 import org.reflections.Reflections
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URI
@@ -12,11 +12,14 @@ import kotlin.system.measureTimeMillis
 
 var session: String? = null
 
-const val AOC_YEAR = 2024
+const val AOC_YEAR = 2023
+
+val logger: Logger = LoggerFactory.getLogger("com.github.kboeckler.aoc24")
 
 fun main() {
     session = readSessionFromFile()
-    Reflections("com.github.kboeckler.aoc24").getSubTypesOf(Day::class.java).filterNot { it.equals(EmptyDay::class.java) }
+    Reflections("com.github.kboeckler.aoc24").getSubTypesOf(Day::class.java)
+        .filterNot { it.equals(EmptyDay::class.java) }
         .sortedWith(::compareSolutionNameTo).forEach(::runSolution)
 }
 
@@ -46,7 +49,7 @@ private fun runSolution(solutionClass: Class<out Day>) {
     var result2: Any = "_"
     val timeSpentInMs = measureTimeMillis {
         try {
-            val input = solution.readInput()
+            val input = readInput(solution)
             result1 = try {
                 solution.part1(input)
             } catch (err: Throwable) {
@@ -64,54 +67,32 @@ private fun runSolution(solutionClass: Class<out Day>) {
         }
     }
     println("%s: %s, %s (%dms)".format(solution.name(), result1, result2, timeSpentInMs))
-    errors.forEach { err -> err.printStackTrace() }
+    errors.forEach { err -> logger.error("Error solving %s".format(solution.name()), err) }
 }
 
-abstract class Day(name: String?, day: Int?) : Logging {
-
-    private val name: String?
-
-    private val day: Int?
-
-    init {
-        this.name = name
-        this.day = day
-    }
-
-    constructor() : this(null, null) {
-    }
+abstract class Day {
 
     fun name(): String {
-        return this.name ?: this.javaClass.simpleName
+        return this.javaClass.simpleName
     }
 
-    private fun day(): Int {
-        return this.day ?: this.javaClass.simpleName.replace("[a-zA-Z]*".toRegex(), "").toInt()
+    fun inputFilename(): String {
+        return "%s.txt".format(day())
     }
+
+    fun day(): Int {
+        return this.javaClass.simpleName.replace("[a-zA-Z]*".toRegex(), "").toInt()
+    }
+
+    open fun isSolution() = true
 
     abstract fun part1(input: String): Any
     abstract fun part2(input: String): Any
-    open fun readInput(): String {
-        val filename = "%s.txt".format(name())
-        val inputFile = File("src/main/resources/$filename")
-        if (!inputFile.exists()) {
-            try {
-                val input = download(AOC_YEAR, day())
-                try {
-                    inputFile.writeText(input)
-                } catch (err: Throwable) {
-                    logger.warn("Downloaded input, but could not write it to file $inputFile: $err")
-                }
-                return input.replace("\r\n", "\n")
-            } catch (err: Throwable) {
-                logger.warn("Error downloading input for ${name()}: $err")
-            }
-        }
-        return inputFile.readText().replace("\r\n", "\n")
-    }
 }
 
 class EmptyDay : Day() {
+    override fun isSolution() = false
+
     override fun part1(input: String): Any {
         return "_"
     }
@@ -119,10 +100,28 @@ class EmptyDay : Day() {
     override fun part2(input: String): Any {
         return "_"
     }
+}
 
-    override fun readInput(): String {
+fun readInput(solution: Day): String {
+    if (!solution.isSolution()) {
         return ""
     }
+    val filename = solution.inputFilename()
+    val inputFile = File("src/main/resources/$filename")
+    if (!inputFile.exists()) {
+        try {
+            val input = download(AOC_YEAR, solution.day())
+            try {
+                inputFile.writeText(input)
+            } catch (err: Throwable) {
+                logger.warn("Downloaded input, but could not write it to file $inputFile: $err")
+            }
+            return input.replace("\r\n", "\n")
+        } catch (err: Throwable) {
+            logger.warn("Error downloading input for ${solution.name()}: $err")
+        }
+    }
+    return inputFile.readText().replace("\r\n", "\n")
 }
 
 fun readSessionFromFile(): String? {

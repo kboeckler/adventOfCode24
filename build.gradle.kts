@@ -37,5 +37,5 @@ kotlin { // Extension for easy setup
 }
 
 application {
-    mainClass.set("de.kevinboeckler.aoc23.Aoc23Kt") // The main class of the application
+    mainClass.set("com.github.kboeckler.aoc24.Aoc24Kt") // The main class of the application
 }
