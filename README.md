@@ -1,5 +1,7 @@
 # Advent of Code 24
 
+![example workflow](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+
 Run ``` ./gradlew run ``` to execute the main runner.
 
 Run ``` ./gradlew test ``` to run all tests.
