@@ -19,32 +19,43 @@ val logger: Logger = LoggerFactory.getLogger("com.github.kboeckler.aoc24")
 fun main() {
     session = readSessionFromFile()
     Reflections("com.github.kboeckler.aoc24").getSubTypesOf(Day::class.java)
-        .filterNot { it.equals(EmptyDay::class.java) }
-        .sortedWith(::compareSolutionNameTo).forEach(::runSolution)
+        .sortedWith(::compareSolutionNameTo)
+        .mapNotNull(::instantiateSolution)
+        .forEach(::runSolution)
 }
 
-fun compareSolutionNameTo(one: Class<out Day>?, another: Class<out Day>?): Int {
-    val matchOne = "(.*Day)(\\d+)\$".toRegex().matchEntire(one!!.simpleName)
-    val matchAnother = "(.*Day)(\\d+)\$".toRegex().matchEntire(another!!.simpleName)
-    val pureOne = if (matchOne != null) matchOne.groupValues[1] else one.simpleName
-    val pureAnother = if (matchAnother != null) matchAnother.groupValues[1] else one.simpleName
+fun compareSolutionNameTo(one: Class<out Day>, another: Class<out Day>): Int {
+    val matchOne = "(.*Day)(\\d+).*".toRegex().matchEntire(one.simpleName)
+    val matchAnother = "(.*Day)(\\d+).*".toRegex().matchEntire(another.simpleName)
+    if (matchOne == null || matchAnother == null) {
+        return one.simpleName.compareTo(another.simpleName)
+    }
+    val pureOne = matchOne.groupValues[1]
+    val pureAnother = matchAnother.groupValues[1]
     val compPure = pureOne.compareTo(pureAnother)
     if (compPure != 0) {
         return compPure
     }
-    val numberOne = if (matchOne != null) matchOne.groupValues[2].toInt() else 0
-    val numberTwo = if (matchAnother != null) matchAnother.groupValues[2].toInt() else 0
-    return numberOne.compareTo(numberTwo)
+    val numberOne = matchOne.groupValues[2].toInt()
+    val numberTwo = matchAnother.groupValues[2].toInt()
+    val compNumber = numberOne.compareTo(numberTwo)
+    if (compNumber != 0) {
+        return compNumber
+    }
+    return one.simpleName.compareTo(another.simpleName)
 }
 
-private fun runSolution(solutionClass: Class<out Day>) {
-    val errors = mutableListOf<Throwable>()
-    val solution: Day = try {
-        solutionClass.getDeclaredConstructor().newInstance()!!
-    } catch (err: Throwable) {
-        errors.add(err)
-        EmptyDay()
+private fun instantiateSolution(solutionClass: Class<out Day>): Day? {
+    try {
+        return solutionClass.getDeclaredConstructor().newInstance()
+    } catch (_: Throwable) {
+        logger.warn("Could not create solution %s, since there was no empty constructor".format(solutionClass.simpleName))
+        return null
     }
+}
+
+private fun runSolution(solution: Day) {
+    val errors = mutableListOf<Throwable>()
     var result1: Any = "_"
     var result2: Any = "_"
     val timeSpentInMs = measureTimeMillis {
@@ -84,28 +95,11 @@ abstract class Day {
         return this.javaClass.simpleName.replace("[a-zA-Z]*".toRegex(), "").toInt()
     }
 
-    open fun isSolution() = true
-
     abstract fun part1(input: String): Any
     abstract fun part2(input: String): Any
 }
 
-class EmptyDay : Day() {
-    override fun isSolution() = false
-
-    override fun part1(input: String): Any {
-        return "_"
-    }
-
-    override fun part2(input: String): Any {
-        return "_"
-    }
-}
-
 fun readInput(solution: Day): String {
-    if (!solution.isSolution()) {
-        return ""
-    }
     val filename = solution.inputFilename()
     val inputFile = File("src/main/resources/$filename")
     if (!inputFile.exists()) {
