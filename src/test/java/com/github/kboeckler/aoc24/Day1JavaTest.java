@@ -8,9 +8,15 @@ public class Day1JavaTest {
   @Test
   void part1() {
     Assertions.assertEquals(
-        "part1",
+        142, new Day1Java().part1("1abc2\n" + "pqr3stu8vwx\n" + "a1b2c3d4e5f\n" + "treb7uchet"));
+  }
+
+  @Test
+  void part2() {
+    Assertions.assertEquals(
+        281,
         new Day1Java()
-            .part1(
+            .part2(
                 "two1nine\n"
                     + "eightwothree\n"
                     + "abcone2threexyz\n"
