@@ -65,14 +65,14 @@ private fun runSolution(solution: Day) {
                 solution.part1(input)
             } catch (err: Throwable) {
                 errors.add(err)
-                "_"
-            }
+                null
+            } ?: "_"
             result2 = try {
                 solution.part2(input)
             } catch (err: Throwable) {
                 errors.add(err)
-                "_"
-            }
+                null
+            } ?: "_"
         } catch (err: Throwable) {
             errors.add(err)
         }
@@ -95,8 +95,8 @@ abstract class Day {
         return this.javaClass.simpleName.replace("[a-zA-Z]*".toRegex(), "").toInt()
     }
 
-    abstract fun part1(input: String): Any
-    abstract fun part2(input: String): Any
+    abstract fun part1(input: String): Any?
+    abstract fun part2(input: String): Any?
 }
 
 fun readInput(solution: Day): String {
