@@ -17,6 +17,11 @@ const val AOC_YEAR = 2024
 val logger: Logger = LoggerFactory.getLogger("com.github.kboeckler.aoc24")
 
 fun main() {
+    val inputFile = File("src/main/resources/banner.txt")
+    if (inputFile.canRead()) {
+        val bannerText = inputFile.readText()
+        println(bannerText)
+    }
     session = readSessionFromFile()
     Reflections("com.github.kboeckler.aoc24").getSubTypesOf(Day::class.java)
         .sortedWith(::compareSolutionNameTo)
