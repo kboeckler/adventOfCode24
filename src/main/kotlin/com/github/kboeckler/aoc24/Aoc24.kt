@@ -12,7 +12,7 @@ import kotlin.system.measureTimeMillis
 
 var session: String? = null
 
-const val AOC_YEAR = 2023
+const val AOC_YEAR = 2024
 
 val logger: Logger = LoggerFactory.getLogger("com.github.kboeckler.aoc24")
 
