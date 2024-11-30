@@ -103,9 +103,11 @@ fun readInput(solution: Day): String {
     val inputFile = File("src/main/resources/$filename")
     if (!inputFile.exists()) {
         try {
+            logger.info("No file $inputFile exists, trying to download.")
             val input = download(AOC_YEAR, solution.day())
             try {
                 inputFile.writeText(input)
+                logger.info("Downloaded input and wrote it to $inputFile.")
             } catch (err: Throwable) {
                 logger.warn("Downloaded input, but could not write it to file $inputFile: $err")
             }
@@ -120,7 +122,7 @@ fun readInput(solution: Day): String {
 fun readSessionFromFile(): String? {
     val sessionFile = File(".aoc_session")
     if (!sessionFile.canRead()) {
-        LoggerFactory.getLogger("Aoc23")
+        logger
             .warn("In order to download missing input automatically you need to provide a .aoc_session file containing the session value.")
         return null
     }
