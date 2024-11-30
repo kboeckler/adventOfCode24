@@ -17,11 +17,7 @@ const val AOC_YEAR = 2024
 val logger: Logger = LoggerFactory.getLogger("com.github.kboeckler.aoc24")
 
 fun main() {
-    val inputFile = File("src/main/resources/banner.txt")
-    if (inputFile.canRead()) {
-        val bannerText = inputFile.readText()
-        println(bannerText)
-    }
+    printBanner()
     session = readSessionFromFile()
     Reflections("com.github.kboeckler.aoc24").getSubTypesOf(Day::class.java)
         .sortedWith(::compareSolutionNameTo)
@@ -68,12 +64,16 @@ private fun runSolution(solution: Day) {
             val input = readInput(solution)
             result1 = try {
                 solution.part1(input)
+            } catch (_: NotImplementedError) {
+                null
             } catch (err: Throwable) {
                 errors.add(err)
                 null
             } ?: "_"
             result2 = try {
                 solution.part2(input)
+            } catch (_: NotImplementedError) {
+                null
             } catch (err: Throwable) {
                 errors.add(err)
                 null
@@ -122,6 +122,14 @@ fun readInput(solution: Day): String {
         }
     }
     return inputFile.readText().replace("\r\n", "\n")
+}
+
+private fun printBanner() {
+    val inputFile = File("src/main/resources/banner.txt")
+    if (inputFile.canRead()) {
+        val bannerText = inputFile.readText()
+        println(bannerText)
+    }
 }
 
 fun readSessionFromFile(): String? {
