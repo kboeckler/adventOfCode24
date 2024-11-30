@@ -3,7 +3,7 @@ package com.github.kboeckler.aoc24
 import kotlin.math.abs
 import kotlin.math.pow
 
-class Day3 : Day() {
+class Day3 : Day {
     override fun part1(input: String): Any {
         val width = if (input.contains("\n")) input.indexOfFirst { it == '\n' } + 1 else input.length
         val numbers = parseNumbers(input)

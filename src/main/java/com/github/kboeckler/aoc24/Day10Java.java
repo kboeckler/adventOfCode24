@@ -2,7 +2,7 @@ package com.github.kboeckler.aoc24;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Day10Java extends Day {
+public class Day10Java implements Day {
 
   @NotNull
   @Override

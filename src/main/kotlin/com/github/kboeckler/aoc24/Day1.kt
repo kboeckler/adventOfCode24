@@ -1,6 +1,6 @@
 package com.github.kboeckler.aoc24
 
-class Day1 : Day() {
+class Day1 : Day {
     override fun part1(input: String): Any {
         return input.lines()
             .map {

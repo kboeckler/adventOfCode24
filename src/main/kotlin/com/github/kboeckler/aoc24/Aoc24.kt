@@ -81,22 +81,21 @@ private fun runSolution(solution: Day) {
     errors.forEach { err -> logger.error("Error solving %s".format(solution.name()), err) }
 }
 
-abstract class Day {
+interface Day {
+    fun part1(input: String): Any?
+    fun part2(input: String): Any?
+}
 
-    fun name(): String {
-        return this.javaClass.simpleName
-    }
+fun Day.name(): String {
+    return this.javaClass.simpleName
+}
 
-    fun inputFilename(): String {
-        return "%s.txt".format(day())
-    }
+fun Day.day(): Int {
+    return this.javaClass.simpleName.replace("[a-zA-Z]*".toRegex(), "").toInt()
+}
 
-    fun day(): Int {
-        return this.javaClass.simpleName.replace("[a-zA-Z]*".toRegex(), "").toInt()
-    }
-
-    abstract fun part1(input: String): Any?
-    abstract fun part2(input: String): Any?
+fun Day.inputFilename(): String {
+    return "%s.txt".format(day())
 }
 
 fun readInput(solution: Day): String {
