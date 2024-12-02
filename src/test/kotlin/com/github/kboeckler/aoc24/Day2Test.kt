@@ -22,7 +22,7 @@ class Day2Test {
 
     @Test
     fun part2() {
-        /*assertEquals(
+        assertEquals(
             4,
             Day2().part2(
                 "7 6 4 2 1\n" +
@@ -32,6 +32,6 @@ class Day2Test {
                         "8 6 4 4 1\n" +
                         "1 3 6 7 9"
             )
-        )*/
+        )
     }
 }

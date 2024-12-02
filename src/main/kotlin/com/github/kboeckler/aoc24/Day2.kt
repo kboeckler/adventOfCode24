@@ -5,11 +5,39 @@ import kotlin.math.abs
 class Day2 : Day {
     override fun part1(input: String): Any {
         return input.lines().map { it.split(" ") }
-            .map { it.map { innerIt -> innerIt.toInt() } }.count { indexOfWrongLevel(it) == -1 }
+            .map { it.map { innerIt -> innerIt.toInt() } }.count(::noWrongLevels)
     }
 
     override fun part2(input: String): Any {
-        TODO("Not yet implemented")
+        return input.lines().map { it.split(" ") }
+            .map { it.map { innerIt -> innerIt.toInt() } }.count(::atMostOneWrongLevel)
+    }
+
+    private fun noWrongLevels(levels: List<Int>) = indexOfWrongLevel(levels) == -1
+
+    private fun atMostOneWrongLevel(levels: List<Int>): Boolean {
+        val firstWrongIndex = indexOfWrongLevel(levels)
+        if (firstWrongIndex == -1) {
+            return true
+        }
+        val firstRetry = levels.subList(0, firstWrongIndex) +
+                levels.subList(
+                    firstWrongIndex + 1,
+                    levels.size
+                )
+        val firstRetryWrongIndex = indexOfWrongLevel(firstRetry)
+        if (firstRetryWrongIndex == -1) {
+            return true
+        }
+        val secondTry = levels.subList(0, firstRetryWrongIndex + 1) + levels.subList(
+            firstRetryWrongIndex + 2,
+            levels.size
+        )
+        val secondTryWrongIndex = indexOfWrongLevel(secondTry)
+        if (secondTryWrongIndex == -1) {
+            return true
+        }
+        return false
     }
 
     private fun indexOfWrongLevel(levels: List<Int>): Int {
