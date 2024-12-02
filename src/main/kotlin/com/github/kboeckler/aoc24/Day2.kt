@@ -20,19 +20,19 @@ class Day2 : Day {
         if (firstWrongIndex == -1) {
             return true
         }
-        val firstRetry = levels.subList(0, firstWrongIndex) +
+        val firstRetry = levels.subList(0, firstWrongIndex - 1) +
                 levels.subList(
-                    firstWrongIndex + 1,
+                    firstWrongIndex,
                     levels.size
                 )
         val firstRetryWrongIndex = indexOfWrongLevel(firstRetry)
         if (firstRetryWrongIndex == -1) {
             return true
         }
-        val secondTry = levels.subList(0, firstRetryWrongIndex + 1) + levels.subList(
-            firstRetryWrongIndex + 2,
+        val secondTry = levels.subList(0, firstWrongIndex) + if (firstWrongIndex + 1 <= levels.size - 1) levels.subList(
+            firstWrongIndex + 1,
             levels.size
-        )
+        ) else emptyList()
         val secondTryWrongIndex = indexOfWrongLevel(secondTry)
         if (secondTryWrongIndex == -1) {
             return true
@@ -40,15 +40,15 @@ class Day2 : Day {
         return false
     }
 
-    private fun indexOfWrongLevel(levels: List<Int>): Int {
+    fun indexOfWrongLevel(levels: List<Int>): Int {
         val diffs = (0..levels.size - 2).map { levels[it] - levels[it + 1] }
         val firstLevelNotHavingSameNorm =
-            (0..diffs.size - 2).indexOfFirst { diffs[it].norm() != diffs[it + 1].norm() }
+            (1..diffs.size - 1).firstOrNull { diffs[it].norm() != diffs[it - 1].norm() }
         val firstLevelNotDifferingInRange = diffs.indexOfFirst { abs(it) !in 1..3 }
-        return if (firstLevelNotHavingSameNorm != -1) {
-            firstLevelNotHavingSameNorm
+        return if (firstLevelNotHavingSameNorm != null) {
+            firstLevelNotHavingSameNorm + 1
         } else if (firstLevelNotDifferingInRange != -1) {
-            firstLevelNotDifferingInRange
+            firstLevelNotDifferingInRange + 1
         } else -1
     }
 
