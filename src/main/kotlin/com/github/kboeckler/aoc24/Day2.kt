@@ -3,7 +3,7 @@ package com.github.kboeckler.aoc24
 import kotlin.math.abs
 
 class Day2 : Day {
-    override fun part1(input: String): Any? {
+    override fun part1(input: String): Any {
         return input.lines().map { it.split(" ") }
             .map { it.map { innerIt -> innerIt.toInt() } }
             .map { line ->
@@ -16,7 +16,7 @@ class Day2 : Day {
             }.count()
     }
 
-    override fun part2(input: String): Any? {
+    override fun part2(input: String): Any {
         TODO("Not yet implemented")
     }
 
