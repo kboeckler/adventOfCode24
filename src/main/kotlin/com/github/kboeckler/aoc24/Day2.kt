@@ -16,40 +16,33 @@ class Day2 : Day {
     private fun noWrongLevels(levels: List<Int>) = indexOfWrongLevel(levels) == -1
 
     private fun atMostOneWrongLevel(levels: List<Int>): Boolean {
-        val firstWrongIndex = indexOfWrongLevel(levels)
-        if (firstWrongIndex == -1) {
+        if (noWrongLevels(levels)) {
             return true
         }
-        val firstRetry = levels.subList(0, firstWrongIndex - 1) +
-                levels.subList(
-                    firstWrongIndex,
-                    levels.size
-                )
-        val firstRetryWrongIndex = indexOfWrongLevel(firstRetry)
-        if (firstRetryWrongIndex == -1) {
-            return true
+        return levels.indices.any {
+            noWrongLevels(levels.withoutItemAt(it))
         }
-        val secondTry = levels.subList(0, firstWrongIndex) + if (firstWrongIndex + 1 <= levels.size - 1) levels.subList(
-            firstWrongIndex + 1,
-            levels.size
-        ) else emptyList()
-        val secondTryWrongIndex = indexOfWrongLevel(secondTry)
-        if (secondTryWrongIndex == -1) {
-            return true
-        }
-        return false
     }
 
     fun indexOfWrongLevel(levels: List<Int>): Int {
         val diffs = (0..levels.size - 2).map { levels[it] - levels[it + 1] }
         val firstLevelNotHavingSameNorm =
-            (1..diffs.size - 1).firstOrNull { diffs[it].norm() != diffs[it - 1].norm() }
+            (1..<diffs.size).firstOrNull { diffs[it].norm() != diffs[it - 1].norm() }
         val firstLevelNotDifferingInRange = diffs.indexOfFirst { abs(it) !in 1..3 }
         return if (firstLevelNotHavingSameNorm != null) {
             firstLevelNotHavingSameNorm + 1
         } else if (firstLevelNotDifferingInRange != -1) {
             firstLevelNotDifferingInRange + 1
         } else -1
+    }
+
+    private fun <T> List<T>.withoutItemAt(itemIndex: Int): List<T> {
+        return if (itemIndex < 0) emptyList() else this.subList(
+            0, itemIndex
+        ) + if (itemIndex + 1 <= this.size - 1) this.subList(
+            itemIndex + 1,
+            this.size
+        ) else emptyList()
     }
 
     private fun Int.norm(): Int {

@@ -36,6 +36,34 @@ class Day2Test {
     }
 
     @Test
+    fun part2_lineByLine() {
+        assertEquals(
+            1,
+            Day2().part2(
+                "7 6 4 2 1"
+            )
+        )
+        assertEquals(
+            0,
+            Day2().part2(
+                "1 2 7 8 9"
+            )
+        )
+        assertEquals(
+            0,
+            Day2().part2(
+                "9 7 6 2 1"
+            )
+        )
+        assertEquals(
+            1,
+            Day2().part2(
+                "1 3 2 4 5"
+            )
+        )
+    }
+
+    @Test
     fun indexOfWrongLevel_firstMinus1() {
         assertEquals(listOf<Int>(-1, -1, -1, -1, -1, -1, -1),
             ("33 30 29 27 24\n" +
