@@ -4,13 +4,11 @@ import kotlin.math.abs
 
 class Day2 : Day {
     override fun part1(input: String): Any {
-        return input.lines().map { it.split(" ") }
-            .map { it.map { innerIt -> innerIt.toInt() } }.count(::noWrongLevels)
+        return input.lines().map { it.split(" ") }.toInts().count(::noWrongLevels)
     }
 
     override fun part2(input: String): Any {
-        return input.lines().map { it.split(" ") }
-            .map { it.map { innerIt -> innerIt.toInt() } }.count(::atMostOneWrongLevel)
+        return input.lines().map { it.split(" ") }.toInts().count(::atMostOneWrongLevel)
     }
 
     private fun noWrongLevels(levels: List<Int>) = indexOfWrongLevel(levels) == -1
@@ -34,6 +32,10 @@ class Day2 : Day {
         } else if (firstLevelNotDifferingInRange != -1) {
             firstLevelNotDifferingInRange + 1
         } else -1
+    }
+
+    private fun <T : List<String>> List<T>.toInts(): List<List<Int>> {
+        return this.map { it.map { innerIt -> innerIt.toInt() } }
     }
 
     private fun <T> List<T>.withoutItemAt(itemIndex: Int): List<T> {
