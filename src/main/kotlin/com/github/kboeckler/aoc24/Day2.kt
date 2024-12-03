@@ -14,10 +14,7 @@ class Day2 : Day {
     private fun noWrongLevels(levels: List<Int>) = indexOfWrongLevel(levels) == -1
 
     private fun atMostOneWrongLevel(levels: List<Int>): Boolean {
-        if (noWrongLevels(levels)) {
-            return true
-        }
-        return levels.indices.any {
+        return noWrongLevels(levels) || levels.indices.any {
             noWrongLevels(levels.withoutItemAt(it))
         }
     }
