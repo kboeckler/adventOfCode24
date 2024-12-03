@@ -22,12 +22,12 @@ class Day3 : Day {
 
     override fun part2(input: String): Any {
         val mulStatements = input.let {
-            matchMul().findAll(it).toList()
+            matchMul().findAll(it)
         }
         val instructionStatements = input.let {
             matchDoOrDont().findAll(it).toList()
         }
-        return mulStatements.asSequence().filter { mul ->
+        return mulStatements.filter { mul ->
             instructionStatements.lastOrNull { instr ->
                 instr.range.last < mul.range.first
             }?.value != "don't()"
