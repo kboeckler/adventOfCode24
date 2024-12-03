@@ -1,31 +1,39 @@
 package com.github.kboeckler.aoc24
 
-import kotlin.sequences.map
-import kotlin.sequences.mapNotNull
-import kotlin.sequences.sum
-
 class Day3 : Day {
-    override fun part1(input: String): Any? {
+
+    // matches all mul(a,b) statements in a string
+    private fun matchMul() = Regex("(mul\\(\\d{1,3},\\d{1,3}\\))")
+
+    // matches a and b in a mul(a,b) string
+    private fun matchDigitsInMul() = Regex("mul\\((\\d*),(\\d*)\\)")
+
+    // matches all do() or don't() statements in a string
+    private fun matchDoOrDont() = Regex("(do\\(\\)|don't\\(\\))")
+
+    override fun part1(input: String): Any {
         return input.let {
-            Regex("(mul\\(\\d{1,3}\\,\\d{1,3}\\))").findAll(it)
+            matchMul().findAll(it)
         }.map { it.value }.mapNotNull {
-            Regex("mul\\((\\d*)\\,(\\d*)\\)").matchEntire(it)
-        }.map { it.groupValues[1].toInt() to it.groupValues[2].toInt() }.map { it.first * it.second }.sum()
+            matchDigitsInMul().matchEntire(it)
+        }.map { it.groupValues[1].toInt() to it.groupValues[2].toInt() }
+            .map { it.first * it.second }.sum()
     }
 
-    override fun part2(input: String): Any? {
+    override fun part2(input: String): Any {
         val mulStatements = input.let {
-            Regex("(mul\\(\\d{1,3}\\,\\d{1,3}\\))").findAll(it).toList()
+            matchMul().findAll(it).toList()
         }
         val instructionStatements = input.let {
-            Regex("(do\\(\\)|don't\\(\\))").findAll(it).toList()
+            matchDoOrDont().findAll(it).toList()
         }
-        return mulStatements.filterIndexed { idx, mul ->
+        return mulStatements.asSequence().filter { mul ->
             instructionStatements.lastOrNull { instr ->
-                if (idx == 0) true else instr.range.first > mulStatements[idx - 1].range.last && instr.range.last < mul.range.first
-            }.also { println("${mul.value}: ${it?.value ?: "noe"}") }?.value != ("don't()" ?: true)
-        }.onEach { println(it.value) }.map { it.value }.mapNotNull {
-            Regex("mul\\((\\d*)\\,(\\d*)\\)").matchEntire(it)
-        }.map { it.groupValues[1].toInt() to it.groupValues[2].toInt() }.map { it.first * it.second }.sum()
+                instr.range.last < mul.range.first
+            }?.value != "don't()"
+        }.map { it.value }.mapNotNull {
+            matchDigitsInMul().matchEntire(it)
+        }.map { it.groupValues[1].toInt() to it.groupValues[2].toInt() }
+            .sumOf { it.first * it.second }
     }
 }
