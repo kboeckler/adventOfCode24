@@ -27,7 +27,7 @@ class Day4Test {
     @Test
     fun part2() {
         assertEquals(
-            31,
+            9,
             Day4().part2(
                 "MMMSXXMASM\n" +
                         "MSAMXMSMSA\n" +
