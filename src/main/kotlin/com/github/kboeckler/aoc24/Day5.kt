@@ -1,5 +1,6 @@
 package com.github.kboeckler.aoc24
 
+import kotlin.math.max
 import kotlin.math.min
 
 class Day5 : Day {
@@ -54,23 +55,23 @@ class Day5 : Day {
     }
 
     private data class Rule(val first: Int, val second: Int) {
-        fun firstInvalidPage(update: Update): Int {
+        fun firstInvalidPagePair(update: Update): Pair<Int, Int>? {
             val firstPagePos = update.pages.indexOf(first)
             val secondPagePos = update.pages.indexOf(second)
             if (firstPagePos == -1 || secondPagePos == -1) {
-                return -1
+                return null
             }
             if (firstPagePos <= secondPagePos) {
-                return -1
+                return null
             }
-            return min(firstPagePos, secondPagePos)
+            return min(firstPagePos, secondPagePos) to max(firstPagePos, secondPagePos)
         }
     }
 
     private data class Update(val pages: List<Int>) {
         fun fulfillsRules(rules: List<Rule>): Boolean {
             for (rule in rules) {
-                if (rule.firstInvalidPage(this) != -1) {
+                if (rule.firstInvalidPagePair(this) != null) {
                     return false
                 }
             }
@@ -79,24 +80,28 @@ class Day5 : Day {
 
         fun getCorrectedUpdate(rules: List<Rule>): Update {
             val newPages = pages.toMutableList()
-            Update(newPages).firstInvalidPage(rules)
-            while (true) {
-                TODO("here")
+            var pagePairToRepair = Update(newPages).firstInvalidPage(rules)
+            while (pagePairToRepair != null) {
+                val swap1 = newPages[pagePairToRepair.pagePair.first]
+                val swap2 = newPages[pagePairToRepair.pagePair.second]
+                newPages[pagePairToRepair.pagePair.first] = swap2
+                newPages[pagePairToRepair.pagePair.second] = swap1
+                pagePairToRepair = Update(newPages).firstInvalidPage(rules)
             }
-            return this
+            return Update(newPages)
         }
 
-        private data class InvalidPageByRule(val page: Int, val rule: Rule)
+        private data class InvalidPagePairByRule(val pagePair: Pair<Int, Int>, val rule: Rule)
 
-        fun firstInvalidPage(rules: List<Rule>): InvalidPageByRule {
-            val invalidPageByRules = mutableListOf<InvalidPageByRule>()
+        fun firstInvalidPage(rules: List<Rule>): InvalidPagePairByRule? {
+            val invalidPagePairByRules = mutableListOf<InvalidPagePairByRule>()
             for (rule in rules) {
-                val firstInvalidPage = rule.firstInvalidPage(this)
-                if (firstInvalidPage == -1) {
-                    invalidPageByRules.add(InvalidPageByRule(firstInvalidPage, rule))
+                val firstInvalidPagePair = rule.firstInvalidPagePair(this)
+                if (firstInvalidPagePair != null) {
+                    invalidPagePairByRules.add(InvalidPagePairByRule(firstInvalidPagePair, rule))
                 }
             }
-            return invalidPageByRules.sortedBy { it.page }.first()
+            return invalidPagePairByRules.minByOrNull { it.pagePair.first }
         }
 
         fun middlePage(): Int {
