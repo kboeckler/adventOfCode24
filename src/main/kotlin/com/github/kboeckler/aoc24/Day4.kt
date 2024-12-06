@@ -19,9 +19,7 @@ class Day4 : Day {
         val area = input.lines()
         return listOf(
             listOf("M.S", ".A.", "M.S"),
-            listOf("M.S", ".A.", "S.M"),
             listOf("S.M", ".A.", "S.M"),
-            listOf("S.M", ".A.", "M.S"),
             listOf("M.M", ".A.", "S.S"),
             listOf("S.S", ".A.", "M.M")
         ).sumOf { occurrences(it, area) }
@@ -32,12 +30,11 @@ class Day4 : Day {
         val xOffsets = area[0].length - pattern[0].length
         return (0..yOffsets).sumOf { y ->
             (0..xOffsets).count { x ->
-                val matches = pattern.filterIndexed { pyIdx, pyVal ->
+                pattern.filterIndexed { pyIdx, pyVal ->
                     pyVal.filterIndexed { pxIdx, pxVal ->
                         area[y + pyIdx][x + pxIdx] == pxVal || pxVal == '.'
                     }.count() == pyVal.length
                 }.count() == pattern.size
-                matches
             }
         }
     }
