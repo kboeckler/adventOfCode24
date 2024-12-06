@@ -1,33 +1,38 @@
 package com.github.kboeckler.aoc24
 
+import java.util.function.Predicate
+
 class Day6 : Day {
+
     override fun part1(input: String): Any {
         val area = input.lines()
         val guardPos = findGuard(area)
-        val path = findPath(guardPos, area)
+        val path = findPath(
+            guardPos,
+            { isInsideBounds(it, area) },
+            { area[it.second][it.first] == '#' })
         return path!!.distinct().size
     }
 
     override fun part2(input: String): Any {
         val area = input.lines()
         val guardPos = findGuard(area)
-        val path = findPath(guardPos, area)
+        val path = findPath(
+            guardPos,
+            { isInsideBounds(it, area) },
+            { area[it.second][it.first] == '#' })
         return path!!.drop(1).distinct().count { pos ->
-            val newArea = areaWithObstruction(area, pos)
-            findPath(guardPos, newArea) == null
+            doesNewObstructionCreateInfinitePath(area, pos, guardPos)
         }
     }
 
-    private fun areaWithObstruction(area: List<String>, pos: Pair<Int, Int>): List<String> {
-        return area.mapIndexed { y, row ->
-            row.mapIndexed { x, char ->
-                if (x == pos.first && y == pos.second) {
-                    '#'
-                } else {
-                    char
-                }
-            }.joinToString("")
-        }
+    private fun doesNewObstructionCreateInfinitePath(
+        area: List<String>, newObstructionPos: Pair<Int, Int>, guardPos: Pair<Int, Int>
+    ): Boolean {
+        return findPath(
+            guardPos,
+            { isInsideBounds(it, area) },
+            { area[it.second][it.first] == '#' || it == newObstructionPos }) == null
     }
 
     private fun findGuard(area: List<String>): Pair<Int, Int> {
@@ -40,18 +45,22 @@ class Day6 : Day {
         }
     }
 
-    private fun findPath(guardPos: Pair<Int, Int>, area: List<String>): List<Pair<Int, Int>>? {
+    private fun findPath(
+        guardPos: Pair<Int, Int>,
+        inBoundsPredicate: Predicate<Pair<Int, Int>>,
+        shouldRotatePredicate: Predicate<Pair<Int, Int>>
+    ): List<Pair<Int, Int>>? {
         val path = mutableListOf(guardPos)
         var currentPos = guardPos
         var currentDir = Direction.UP
         val visited = mutableMapOf<Pair<Int, Int>, MutableSet<Direction>>()
         visited.computeIfAbsent(currentPos, { mutableSetOf() }).add(currentDir)
         var currentNextPos = currentDir.next(currentPos)
-        while (isInsideBounds(currentNextPos, area)) {
+        while (inBoundsPredicate.test(currentNextPos)) {
             if (visited[currentNextPos]?.contains(currentDir) == true) {
                 return null
             }
-            if (area[currentNextPos.second][currentNextPos.first] == '#') {
+            if (shouldRotatePredicate.test(currentNextPos)) {
                 currentDir = currentDir.rotateRight()
             } else {
                 currentPos = currentNextPos
