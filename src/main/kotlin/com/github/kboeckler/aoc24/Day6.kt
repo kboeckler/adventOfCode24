@@ -5,11 +5,29 @@ class Day6 : Day {
         val area = input.lines()
         val guardPos = findGuard(area)
         val path = findPath(guardPos, area)
-        return path.distinct().size
+        return path!!.distinct().size
     }
 
     override fun part2(input: String): Any {
-        TODO("Not yet implemented")
+        val area = input.lines()
+        val guardPos = findGuard(area)
+        val path = findPath(guardPos, area)
+        return path!!.drop(1).distinct().count { pos ->
+            val newArea = areaWithObstruction(area, pos)
+            findPath(guardPos, newArea) == null
+        }
+    }
+
+    private fun areaWithObstruction(area: List<String>, pos: Pair<Int, Int>): List<String> {
+        return area.mapIndexed { y, row ->
+            row.mapIndexed { x, char ->
+                if (x == pos.first && y == pos.second) {
+                    '#'
+                } else {
+                    char
+                }
+            }.joinToString("")
+        }
     }
 
     private fun findGuard(area: List<String>): Pair<Int, Int> {
@@ -22,17 +40,23 @@ class Day6 : Day {
         }
     }
 
-    private fun findPath(guardPos: Pair<Int, Int>, area: List<String>): List<Pair<Int, Int>> {
-        val path = mutableListOf<Pair<Int, Int>>(guardPos)
+    private fun findPath(guardPos: Pair<Int, Int>, area: List<String>): List<Pair<Int, Int>>? {
+        val path = mutableListOf(guardPos)
         var currentPos = guardPos
         var currentDir = Direction.UP
+        val visited = mutableMapOf<Pair<Int, Int>, MutableSet<Direction>>()
+        visited.computeIfAbsent(currentPos, { mutableSetOf() }).add(currentDir)
         var currentNextPos = currentDir.next(currentPos)
         while (isInsideBounds(currentNextPos, area)) {
+            if (visited[currentNextPos]?.contains(currentDir) == true) {
+                return null
+            }
             if (area[currentNextPos.second][currentNextPos.first] == '#') {
                 currentDir = currentDir.rotateRight()
             } else {
                 currentPos = currentNextPos
                 path.add(currentPos)
+                visited.computeIfAbsent(currentPos, { mutableSetOf() }).add(currentDir)
             }
             currentNextPos = currentDir.next(currentPos)
         }
@@ -49,18 +73,18 @@ class Day6 : Day {
         fun next(pos: Pair<Int, Int>): Pair<Int, Int> {
             return when (this) {
                 UP -> pos.first to pos.second - 1
-                Direction.RIGHT -> pos.first + 1 to pos.second
-                Direction.DOWN -> pos.first to pos.second + 1
-                Direction.LEFT -> pos.first - 1 to pos.second
+                RIGHT -> pos.first + 1 to pos.second
+                DOWN -> pos.first to pos.second + 1
+                LEFT -> pos.first - 1 to pos.second
             }
         }
 
         fun rotateRight(): Direction {
             return when (this) {
-                UP -> Direction.RIGHT
-                Direction.RIGHT -> DOWN
-                Direction.DOWN -> LEFT
-                Direction.LEFT -> UP
+                UP -> RIGHT
+                RIGHT -> DOWN
+                DOWN -> LEFT
+                LEFT -> UP
             }
         }
     }
