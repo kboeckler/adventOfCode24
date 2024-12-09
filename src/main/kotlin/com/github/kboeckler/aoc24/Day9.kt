@@ -2,7 +2,7 @@ package com.github.kboeckler.aoc24
 
 class Day9 : Day {
     override fun part1(input: String): Any {
-        return input.lines().map { line ->
+        return input.let { line ->
             val ids = (0 until line.length / 2 + 1).map { "$it" }.toList()
             val dots = line.map { "." }.toList()
             val symbols = ids.zip(dots).flatMap { listOf(it.first, it.second) }
@@ -11,8 +11,8 @@ class Day9 : Day {
                 (0 until assignment.first).map { assignment.second }.joinToString("")
             }.joinToString("")
             println(expanded)
-            0
-        }.sum()
+            expanded.length
+        }
     }
 
     override fun part2(input: String): Any {
