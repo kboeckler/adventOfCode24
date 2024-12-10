@@ -1,6 +1,5 @@
 package com.github.kboeckler.aoc24
 
-import com.github.kboeckler.aoc24.Day8.Vector2D
 import kotlin.math.max
 
 class Day8 : Day {
@@ -62,16 +61,4 @@ class Day8 : Day {
             )
         }
     }
-
-    private data class Vector2D(val x: Int, val y: Int) {
-        constructor(pair: Pair<Int, Int>) : this(pair.first, pair.second)
-
-        fun inBoundsOfGrid(width: Int, height: Int) = this.x >= 0 && this.y >= 0 && this.x < width && this.y < height
-    }
-
-    private operator fun Vector2D.plus(other: Vector2D) = Vector2D(this.x + other.x, this.y + other.y)
-
-    private operator fun Vector2D.minus(other: Vector2D) = Vector2D(this.x - other.x, this.y - other.y)
-
-    private operator fun Int.times(vector: Vector2D) = Vector2D(this * vector.x, this * vector.y)
 }

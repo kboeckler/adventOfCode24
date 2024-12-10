@@ -76,25 +76,4 @@ class Day6 : Day {
         return pos.first in 0..area.lastIndex && pos.second in 0..area.first().lastIndex
     }
 
-    private enum class Direction {
-        UP, RIGHT, DOWN, LEFT;
-
-        fun next(pos: Pair<Int, Int>): Pair<Int, Int> {
-            return when (this) {
-                UP -> pos.first to pos.second - 1
-                RIGHT -> pos.first + 1 to pos.second
-                DOWN -> pos.first to pos.second + 1
-                LEFT -> pos.first - 1 to pos.second
-            }
-        }
-
-        fun rotateRight(): Direction {
-            return when (this) {
-                UP -> RIGHT
-                RIGHT -> DOWN
-                DOWN -> LEFT
-                LEFT -> UP
-            }
-        }
-    }
 }
