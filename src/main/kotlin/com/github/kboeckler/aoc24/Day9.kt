@@ -22,7 +22,7 @@ class Day9 : Day {
         }
         val rearranged = sb
         return rearranged.withIndex()
-            .sumOf { it.index.toBigInteger() * "${it.value}".toBigInteger() }
+            .sumOf { it.index.toBigInteger() * it.value.toBigInteger() }
     }
 
     override fun part2(input: String): Any {
@@ -59,9 +59,11 @@ class Day9 : Day {
             }
         }
         val rearranged = sb
-        val now = rearranged.filter { it != "." }
-        return now.withIndex()
-            .sumOf { it.index.toBigInteger() * "${it.value}".toBigInteger() }
+        val now = rearranged
+        return now.withIndex().map {
+            if (it.value == ".") it.index to "0" else it.index to it.value
+        }
+            .sumOf { it.first.toBigInteger() * it.second.toBigInteger() }
     }
 
     private fun expand(line: String): List<Pair<Int, String>> {
