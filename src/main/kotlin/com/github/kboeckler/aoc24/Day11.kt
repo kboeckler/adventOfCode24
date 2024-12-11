@@ -2,81 +2,47 @@ package com.github.kboeckler.aoc24
 
 import java.math.BigInteger
 
+typealias Day11Cache = MutableMap<Pair<Int, BigInteger>, BigInteger>
+
+private fun cache(): Day11Cache = mutableMapOf<Pair<Int, BigInteger>, BigInteger>()
+
 class Day11 : Day {
     override fun part1(input: String): Any {
-        val trees = input.split(" ").map { it.toBigInteger() }.map { Tree(Leaf(it)) }
-        var stones = input.split(" ").map { it.toBigInteger() }
-        repeat(25) {
-            trees.forEach { it.applyRules() }
-            stones = stones.flatMap(::applyRules)
-        }
-        //println(trees)
-        return stones.size
+        return input.split(" ").map { it.toBigInteger() }.sumOf { blinkStoneRecursively(it, 25, cache()) }
     }
 
     override fun part2(input: String): Any {
-        var stones = input.split(" ").map { it.toBigInteger() }
-        repeat(75) {
-            stones = stones.flatMap(::applyRules)
-        }
-        return stones.size
+        return input.split(" ").map { it.toBigInteger() }.sumOf { blinkStoneRecursively(it, 75, cache()) }
     }
 
-    private fun applyRules(stone: BigInteger): List<BigInteger> {
-        if (stone == 0.toBigInteger()) {
-            return listOf(1.toBigInteger())
+    private fun blinkStoneRecursively(stone: BigInteger, maxSteps: Int, cache: Day11Cache): BigInteger {
+        if (cache.containsKey(maxSteps to stone)) {
+            return cache[maxSteps to stone]!!
         }
-        val stringedStone = stone.toString()
-        if (stringedStone.length % 2 == 0) {
-            val halvesOfStringedStone = stringedStone.withIndex().partition { it.index < stringedStone.length / 2 }
-            return listOf(
-                halvesOfStringedStone.first.map { it.value }.joinToString("").toBigInteger(),
-                halvesOfStringedStone.second.map { it.value }.joinToString("").toBigInteger()
-            )
-        }
-        return listOf(stone * 2024.toBigInteger())
+        val stoneValue = splitCountRecursively(maxSteps, stone, cache)
+        cache[maxSteps to stone] = stoneValue
+        return stoneValue
     }
 
-    private data class Tree(var leaves: List<Leaf>) {
-        constructor(leaf: Leaf) : this(listOf(leaf))
-
-        fun applyRules() {
-            leaves = leaves.map { it.applyRules() }
-        }
-    }
-
-    private data class Leaf(val tree: Tree?, val value: BigInteger?) {
-        constructor(value: BigInteger) : this(null, value)
-        constructor(tree: Tree) : this(tree, null)
-
-        fun applyRules(): Leaf {
-            if (value != null) {
-                val leaves = applyRules(value).map { Leaf(it) }
-                if (leaves.size == 1) {
-                    return leaves.first()
-                } else {
-                    return Leaf(Tree(leaves))
-                }
-            } else {
-                // has tree
-                tree!!.applyRules()
-                return Leaf(tree, null)
-            }
-        }
-
-        private fun applyRules(stone: BigInteger): List<BigInteger> {
-            if (stone == 0.toBigInteger()) {
-                return listOf(1.toBigInteger())
-            }
+    private fun splitCountRecursively(maxSteps: Int, stone: BigInteger, cache: Day11Cache): BigInteger {
+        return if (maxSteps == 0) {
+            BigInteger.ONE
+        } else if (stone == BigInteger.ZERO) {
+            blinkStoneRecursively(BigInteger.ONE, maxSteps - 1, cache)
+        } else {
             val stringedStone = stone.toString()
             if (stringedStone.length % 2 == 0) {
-                val halvesOfStringedStone = stringedStone.withIndex().partition { it.index < stringedStone.length / 2 }
-                return listOf(
-                    halvesOfStringedStone.first.map { it.value }.joinToString("").toBigInteger(),
-                    halvesOfStringedStone.second.map { it.value }.joinToString("").toBigInteger()
-                )
+                val firstHalf = stringedStone.substring(0, stringedStone.length / 2)
+                val secondHalf = stringedStone.substring(stringedStone.length / 2, stringedStone.length)
+                blinkStoneRecursively(
+                    firstHalf.toBigInteger(),
+                    maxSteps - 1,
+                    cache
+                ) + blinkStoneRecursively(secondHalf.toBigInteger(), maxSteps - 1, cache)
+            } else {
+                blinkStoneRecursively(stone * 2024.toBigInteger(), maxSteps - 1, cache)
             }
-            return listOf(stone * 2024.toBigInteger())
         }
     }
+
 }
