@@ -20,8 +20,7 @@ class Day9 : Day {
             }
             index++
         }
-        val rearranged = sb
-        return rearranged.withIndex()
+        return sb.map { it.replace(".", "0") }.withIndex()
             .sumOf { it.index.toBigInteger() * it.value.toBigInteger() }
     }
 
@@ -31,8 +30,8 @@ class Day9 : Day {
         val sb = mutableListOf<String>()
         var index = 0
         val movedIndicesOfReversed = mutableSetOf<Int>()
-        var endIndexExclusive = expanded.size
-        var expandedMutable = expanded.toMutableList()
+        val endIndexExclusive = expanded.size
+        val expandedMutable = expanded.toMutableList()
         while (index < endIndexExclusive) {
             if (expandedMutable[index].second != ".") {
                 if (!movedIndicesOfReversed.contains(index)) {
@@ -58,12 +57,8 @@ class Day9 : Day {
                 }
             }
         }
-        val rearranged = sb
-        val now = rearranged
-        return now.withIndex().map {
-            if (it.value == ".") it.index to "0" else it.index to it.value
-        }
-            .sumOf { it.first.toBigInteger() * it.second.toBigInteger() }
+        return sb.map { it.replace(".", "0") }.withIndex()
+            .sumOf { it.index.toBigInteger() * it.value.toBigInteger() }
     }
 
     private fun expand(line: String): List<Pair<Int, String>> {
