@@ -48,16 +48,36 @@ enum class Direction {
             LEFT -> UP
         }
     }
+
+    companion object {
+        fun of(difference: Vector2D): Direction {
+            return when (difference.normalize()) {
+                Vector2D(0, 1) -> DOWN
+                Vector2D(0, -1) -> UP
+                Vector2D(1, 0) -> RIGHT
+                Vector2D(-1, 0) -> LEFT
+                else -> {
+                    throw IllegalArgumentException("Unknown difference: $difference")
+                }
+            }
+        }
+    }
 }
 
 data class Vector2D(val x: Int, val y: Int) {
     constructor(pair: Pair<Int, Int>) : this(pair.first, pair.second)
 
-    fun inBoundsOfGrid(width: Int, height: Int) = this.x >= 0 && this.y >= 0 && this.x < width && this.y < height
-}
+    fun inBoundsOfGrid(width: Int, height: Int) =
+        this.x >= 0 && this.y >= 0 && this.x < width && this.y < height
 
-fun Vector2D.toIndex(width: Int): Int {
-    return (x to y).toIndex(width)
+    fun toIndex(width: Int): Int {
+        return (x to y).toIndex(width)
+    }
+
+    fun normalize(): Vector2D {
+        // Currently this is not made to an Einheitsvektor
+        return this
+    }
 }
 
 operator fun Vector2D.plus(other: Vector2D) = Vector2D(this.x + other.x, this.y + other.y)

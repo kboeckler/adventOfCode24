@@ -38,9 +38,22 @@ class Day12Test {
     }
 
     @Test
-    fun part2() {
-        /*assertEquals(
-            2858,
+    fun part2_small() {
+        assertEquals(
+            368,
+            Day12().part2(
+                "AAAA\n" +
+                        "BBCD\n" +
+                        "BBCC\n" +
+                        "EEEC"
+            )
+        )
+    }
+
+    @Test
+    fun part2_larger() {
+        assertEquals(
+            1206,
             Day12().part2(
                 "RRRRIICCFF\n" +
                         "RRRRIICCCF\n" +
@@ -53,6 +66,6 @@ class Day12Test {
                         "MIIISIJEEE\n" +
                         "MMMISSJEEE"
             )
-        )*/
+        )
     }
 }
