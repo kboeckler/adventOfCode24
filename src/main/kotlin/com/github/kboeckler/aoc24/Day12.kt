@@ -1,5 +1,7 @@
 package com.github.kboeckler.aoc24
 
+import org.reflections.vfs.Vfs.Dir
+
 class Day12 : Day {
     override fun part1(input: String): Any {
         return splitIntoAreas(input)
@@ -60,6 +62,7 @@ class Day12 : Day {
 
         fun sides(): Int {
             val fences = outerFences()
+            val grouped = fences.groupBy { listOf(it.a, it.b).sorted() to Direction.of(it.b - it.a).axis() }.keys.size
             var currentIndex = 0
             while (currentIndex <= fences.size) {
                 TODO()

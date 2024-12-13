@@ -49,6 +49,18 @@ enum class Direction {
         }
     }
 
+    fun vertical() = this == UP || this == DOWN
+
+    fun horizontal() = this == LEFT || this == RIGHT
+
+    fun axis() =
+        if (vertical()) Axis.Y else if (horizontal()) Axis.X else throw IllegalArgumentException("No axis for $this")
+
+    enum class Axis {
+        X, Y
+    }
+
+
     companion object {
         fun of(difference: Vector2D): Direction {
             return when (difference.normalize()) {
@@ -64,7 +76,7 @@ enum class Direction {
     }
 }
 
-data class Vector2D(val x: Int, val y: Int) {
+data class Vector2D(val x: Int, val y: Int) : Comparable<Vector2D> {
     constructor(pair: Pair<Int, Int>) : this(pair.first, pair.second)
 
     fun inBoundsOfGrid(width: Int, height: Int) =
@@ -78,6 +90,19 @@ data class Vector2D(val x: Int, val y: Int) {
         // Currently this is not made to an Einheitsvektor
         return this
     }
+
+    override fun compareTo(other: Vector2D): Int {
+        if (this == other) {
+            return 0
+        }
+        val compX = x.compareTo(other.x)
+        if (compX != 0) {
+            return compX
+        }
+        return y.compareTo(other.y)
+    }
+
+
 }
 
 operator fun Vector2D.plus(other: Vector2D) = Vector2D(this.x + other.x, this.y + other.y)
